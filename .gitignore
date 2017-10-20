@@ -1,0 +1,11 @@
+node_modules
+yarn.lock
+.DS_Store
+
+./api-server/node_modules
+./api-server/yarn.lock
+./api-server/.DS_Store
+
+./frontend/node_modules
+yarn.lock
+.DS_Store
