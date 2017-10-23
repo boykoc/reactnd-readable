@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class App extends Component {
         <p>Categories include:</p> 
         <ul>          
           { this.state.backend.categories.map((category) => (
-            <li key={category.name}><a href={category.path}>{category.name}</a></li>
+            <li key={category.name}><Link to={category.path}>{category.name}</Link></li>
           )) }
         </ul>
       </div>
