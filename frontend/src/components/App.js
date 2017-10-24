@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import CategoryList from './CategoryList';
+import { Route } from 'react-router-dom'
+import { connect } from 'react-redux';
+import { loadCategories } from '../actions';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      backend: {categories: []}
+      categories: [],
+      posts: []
     }
   }
 
+  /*doThing = () => {
+    this.props.loadPosts({})
+  }*/
+  
   componentDidMount() {
     const url = `${process.env.REACT_APP_BACKEND}/categories`;
     fetch(url, { headers: { 'Authorization': 'whatever-you-want' },
@@ -16,24 +24,36 @@ class App extends Component {
       .then( (res) => { 
         return(res.json()) 
       })
-      .then((data) => {        
-        this.setState({backend: data});
+      .then((data) => {
+      	this.setState({categories: data});
+        //console.log(data)
+        this.props.getCategories(data)
       });
   }
 
   render() {
+    //console.log(this.state.categories)
+    console.log(this.props.getCategories(this.state.categories.categories))
     return (
-      <div>        
-        <h1>Readable</h1>
-        <p>Categories include:</p> 
-        <ul>          
-          { this.state.backend.categories.map((category) => (
-            <li key={category.name}><Link to={category.path}>{category.name}</Link></li>
-          )) }
-        </ul>
+      <div>
+        <Route exact path='/' render={() => (
+            <CategoryList />
+          )} />
       </div>
     );
   }
 }
 
-export default App;
+function mapStateToProps(categories) {
+  return {
+    categories
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    getCategories: (state) => dispatch(loadCategories(state))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
