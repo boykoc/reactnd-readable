@@ -1,14 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 class CategoryList extends Component {
   render() {
     return (
       <div>
-<p>Categories include:</p> 
-
-   </div>
+		<p>Categories include:</p> 
+		<ul>
+      {console.log(this.props)}
+ 
+      
+        </ul>      
+   	  </div>
     );
   }
 }
 
-export default CategoryList;
+function mapStateToProps(categories) {
+  return {
+    categories
+  }
+}
+
+export default connect(mapStateToProps)(CategoryList);

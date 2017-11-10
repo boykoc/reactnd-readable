@@ -1,59 +1,70 @@
 import React, { Component } from 'react';
-import CategoryList from './CategoryList';
-import { Route } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { loadCategories } from '../actions';
+import { selectCategory, fetchPosts } from '../actions';
 
 class App extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      categories: [],
-      posts: []
-    }
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
   }
 
-  /*doThing = () => {
-    this.props.loadPosts({})
-  }*/
-  
   componentDidMount() {
-    const url = `${process.env.REACT_APP_BACKEND}/categories`;
-    fetch(url, { headers: { 'Authorization': 'whatever-you-want' },
-                 credentials: 'include' } )
-      .then( (res) => { 
-        return(res.json()) 
-      })
-      .then((data) => {
-      	this.setState({categories: data});
-        //console.log(data)
-        this.props.getCategories(data)
-      });
+    const { dispatch, selectedCategory } = this.props
+    dispatch(fetchPosts(selectedCategory))
   }
 
+  handleChange(nextCategory) {
+    this.props.dispatch(selectCategory(nextCategory))
+    this.props.dispatch(fetchPosts(nextCategory))
+  }
+  
   render() {
-    //console.log(this.state.categories)
-    console.log(this.props.getCategories(this.state.categories.categories))
+    const { selectedCategory, posts, isFetching, lastUpdated } = this.props
+    const options = ['react', 'redux', 'udacity']
     return (
       <div>
-        <Route exact path='/' render={() => (
-            <CategoryList />
-          )} />
+      	
+        <span>
+          <h1>{selectedCategory}</h1>
+          <select onChange={e => this.handleChange(e.target.value)} value={selectedCategory}>
+            {options.map(option => (
+              <option value={option} key={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </span>
+      
+        {isFetching && posts.length === 0 && <h2>Loading...</h2>}
+        {!isFetching && posts.length === 0 && <h2>No posts founds.</h2>}
+        <ul>
+         {posts.length > 0 &&
+         posts.map((post) => (
+           <li key={post.id}>{post.title}</li>
+         ))
+        }
+  		</ul>
       </div>
     );
   }
 }
 
-function mapStateToProps(categories) {
+function mapStateToProps(state) {
+  const { selectedCategory, postsByCategory } = state
+  const {
+    isFetching,
+    lastUpdated,
+    items: posts
+  } = postsByCategory[selectedCategory] || {
+    isFetching: true,
+    items: []
+  }
   return {
-    categories
+    selectedCategory,
+    posts,
+    isFetching,
+    lastUpdated
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    getCategories: (state) => dispatch(loadCategories(state))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

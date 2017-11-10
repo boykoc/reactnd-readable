@@ -4,11 +4,17 @@ import './index.css';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import { createStore } from 'redux';
-import reducer from './reducers/';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './reducers';
 import { Provider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk'
 
-const store = createStore(reducer);
+const store = createStore(
+  rootReducer,
+  applyMiddleware(
+    thunkMiddleware // lets us dispatch() functions
+  )
+);
 
 ReactDOM.render(
   <Provider store={store}>
