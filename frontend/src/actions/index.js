@@ -31,6 +31,37 @@ export function receivePosts(category, json) {
   }
 }
 
+
+export const SELECT_POST = 'SELECT_POST'
+ 
+export function selectPost(post) {
+  return {
+    type: SELECT_POST,
+    post
+  }
+}
+
+export const REQUEST_POST = 'REQUEST_POST'
+
+export function requestPost(post) {
+  return {
+    type: REQUEST_POST,
+    post
+  }
+}
+
+export const RECEIVE_POST = 'RECEIVE_POST'
+
+export function receivePost(post, json) {
+  return {
+    type: RECEIVE_POST,
+    post: json,
+    receivedAt: Date.now()
+  }
+}
+
+
+
 /* Thunk Actions for async calls */  
 
 export function fetchPosts(category) {
@@ -45,6 +76,22 @@ export function fetchPosts(category) {
       )
       .then(json =>             
         dispatch(receivePosts(category, json)) 
+      )
+  }
+}
+
+export function fetchPost(post) {
+  return function (dispatch) {
+    dispatch(requestPost(post))
+    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post}`, 
+                 { headers: { 'Authorization': 'whatever-you-want' },
+                 credentials: 'include' } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(receivePost(post, json)) 
       )
   }
 }

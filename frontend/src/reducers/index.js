@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import { SELECT_CATEGORY, REQUEST_POSTS, RECEIVE_POSTS } from '../actions'
+import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
 
 function selectedCategory(state = 'react', action) {
   switch (action.type) {
@@ -39,9 +40,58 @@ function postsByCategory(state = {}, action) {
   }
 }
 
+
+
+
+
+function selectedPost(state = {}, action) {
+  switch (action.type) {
+    case SELECT_POST:
+      return action.post
+    default:
+      return state
+  }
+}
+
+function post( state = { isFetching: false}, action) {
+  switch (action.type) {
+    case REQUEST_POST:
+      return {...state, 
+      	isFetching: true
+      }
+    case RECEIVE_POST:
+      return {...state, 
+        isFetching: false,
+        post: action.post,
+        lastUpdated: action.recievedAt
+      }
+    default:
+      return state
+  }
+}
+
+function postDetails(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_POST:
+    case REQUEST_POST:
+      return {...state, 
+        post: post(action.post, action)
+      }
+    default: 
+      return state
+  }
+}
+
+
+
+
+
+
 const rootReducer = combineReducers({
   postsByCategory,
-  selectedCategory
+  selectedCategory, 
+  postDetails,
+  selectedPost
 })
 
 export default rootReducer

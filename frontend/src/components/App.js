@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchPosts } from '../actions';
+import { selectCategory, fetchPosts, selectPost, fetchPost } from '../actions';
+import { Link } from 'react-router-dom'
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
+    this.handlePostClick = this.handlePostClick.bind(this)
   }
 
   componentDidMount() {
@@ -18,7 +20,14 @@ class App extends Component {
     this.props.dispatch(fetchPosts(nextCategory))
   }
   
+  handlePostClick(event, post) {
+    event.preventDefault()
+    this.props.dispatch(selectPost(post))
+    this.props.dispatch(fetchPost(post))
+  }
+  
   render() {
+    console.log(this.props)
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
     const options = ['react', 'redux', 'udacity']
     return (
@@ -40,7 +49,11 @@ class App extends Component {
         <ul>
          {posts.length > 0 &&
          posts.map((post) => (
-           <li key={post.id}>{post.title}</li>
+           <li key={post.id}>
+		     <button onClick={e => this.handlePostClick(e, post.id)}>{post.title}</button> <br/>
+			 Author: {post.author} <br/>
+			 Score: {post.voteScore}
+		   </li>
          ))
         }
   		</ul>
