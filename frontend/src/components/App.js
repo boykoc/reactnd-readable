@@ -31,39 +31,37 @@ class App extends Component {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
     const options = ['react', 'redux', 'udacity']
     return (
-      <div>
-      
+      <div>      
 		<Route exact path="/" render={() => (
-      <div>
-        <span>
-          <h1>{selectedCategory}</h1>
-          <select onChange={e => this.handleChange(e.target.value)} value={selectedCategory}>
-            {options.map(option => (
-              <option value={option} key={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </span>
-      
-        {isFetching && posts.length === 0 && <h2>Loading...</h2>}
-        {!isFetching && posts.length === 0 && <h2>No posts founds.</h2>}
-        <ul>
-         {posts.length > 0 &&
-         posts.map((post) => (
-           <li key={post.id}>
-		     <Link to={post.id} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
-			 Author: {post.author} <br/>
-			 Score: {post.voteScore}
-		   </li>
-         ))
-        }
-  		</ul>      
-</div>
+          <div>
+            <span>
+              <h1>{selectedCategory}</h1>
+              <select onChange={e => this.handleChange(e.target.value)} value={selectedCategory}>
+                {options.map(option => (
+                  <option value={option} key={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </span>
+
+            {isFetching && posts.length === 0 && <h2>Loading...</h2>}
+            {!isFetching && posts.length === 0 && <h2>No posts founds.</h2>}
+            <ul>
+             {posts.length > 0 &&
+             posts.map((post) => (
+               <li key={post.id}>
+                 <Link to={post.id} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
+                 Author: {post.author} <br/>
+                 Score: {post.voteScore}
+               </li>
+             ))
+            }
+            </ul>      
+		  </div>
     	)} />
       	
-		<Route path="/:postId" component={Post} />
-        
+		<Route path="/:postId" component={Post} />        
       </div>
     );
   }
