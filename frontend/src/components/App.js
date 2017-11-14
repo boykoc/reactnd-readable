@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectCategory, fetchPosts, selectPost, fetchPost } from '../actions';
-import { Link } from 'react-router-dom'
+import { Link, Route } from 'react-router-dom'
+import Post from './Post'
 
 class App extends Component {
   constructor(props) {
@@ -21,18 +22,19 @@ class App extends Component {
   }
   
   handlePostClick(event, post) {
-    event.preventDefault()
+    //event.preventDefault()
     this.props.dispatch(selectPost(post))
     this.props.dispatch(fetchPost(post))
   }
   
   render() {
-    console.log(this.props)
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
     const options = ['react', 'redux', 'udacity']
     return (
       <div>
-      	
+      
+		<Route exact path="/" render={() => (
+      <div>
         <span>
           <h1>{selectedCategory}</h1>
           <select onChange={e => this.handleChange(e.target.value)} value={selectedCategory}>
@@ -50,13 +52,18 @@ class App extends Component {
          {posts.length > 0 &&
          posts.map((post) => (
            <li key={post.id}>
-		     <button onClick={e => this.handlePostClick(e, post.id)}>{post.title}</button> <br/>
+		     <Link to={post.id} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
 			 Author: {post.author} <br/>
 			 Score: {post.voteScore}
 		   </li>
          ))
         }
-  		</ul>
+  		</ul>      
+</div>
+    	)} />
+      	
+		<Route path="/:postId" component={Post} />
+        
       </div>
     );
   }

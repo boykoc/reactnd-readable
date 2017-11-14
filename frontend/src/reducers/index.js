@@ -57,7 +57,8 @@ function post( state = { isFetching: false}, action) {
   switch (action.type) {
     case REQUEST_POST:
       return {...state, 
-      	isFetching: true
+      	isFetching: true,
+        post: {}
       }
     case RECEIVE_POST:
       return {...state, 
