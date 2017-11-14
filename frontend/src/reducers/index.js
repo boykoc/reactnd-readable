@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import { SELECT_CATEGORY, REQUEST_POSTS, RECEIVE_POSTS } from '../actions'
 import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
+import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
 
 function selectedCategory(state = 'react', action) {
   switch (action.type) {
@@ -87,12 +88,45 @@ function postDetails(state = {}, action) {
 
 
 
+function comments( state = { isFetching: false, comments: []}, action) {
+  switch (action.type) {
+    case REQUEST_COMMENTS:
+      return {...state, 
+      	isFetching: true
+      }
+    case RECEIVE_COMMENTS:
+      return {...state, 
+        isFetching: false,
+        comments: action.comments,
+        lastUpdated: action.recievedAt
+      }
+    default:
+      return state
+  }
+}
+
+function commentsByPost(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_COMMENTS:
+    case REQUEST_COMMENTS:
+      return {...state, 
+        [action.post]: comments(state[action.post], action)
+      }
+    default: 
+      return state
+  }
+}
+
+
+
+
 
 const rootReducer = combineReducers({
   postsByCategory,
   selectedCategory, 
   postDetails,
-  selectedPost
+  selectedPost, 
+  commentsByPost
 })
 
 export default rootReducer

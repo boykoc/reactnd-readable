@@ -62,6 +62,34 @@ export function receivePost(post, json) {
 
 
 
+
+
+
+
+
+export const REQUEST_COMMENTS = 'REQUEST_COMMENTS'
+
+export function requestComments(post) {
+  return {
+    type: REQUEST_COMMENTS,
+    post
+  }
+}
+
+export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS'
+
+export function receiveComments(post, json) {
+  return {
+    type: RECEIVE_COMMENTS,
+    post,
+    comments: json.map(comment => comment),
+    receivedAt: Date.now()
+  }
+}
+
+
+
+
 /* Thunk Actions for async calls */  
 
 export function fetchPosts(category) {
@@ -92,6 +120,22 @@ export function fetchPost(post) {
       )
       .then(json =>             
         dispatch(receivePost(post, json)) 
+      )
+  }
+}
+
+export function fetchComments(post) {
+  return function (dispatch) {
+    dispatch(requestComments(post))
+    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post}/comments`, 
+                 { headers: { 'Authorization': 'whatever-you-want' },
+                 credentials: 'include' } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(receiveComments(post, json)) 
       )
   }
 }
