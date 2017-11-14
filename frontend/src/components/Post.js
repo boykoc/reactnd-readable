@@ -23,17 +23,17 @@ class Post extends Component {
           <div>
          	<h2>{post.title}</h2>
           	<p>{post.body}</p>
-	        <p>{post.author}</p>
-            <p>{post.voteScore}</p>
-      		<p>TODO: Post total coment count.</p>		
+	        <p>Author: {post.author}</p>
+            <p>Vote score: {post.voteScore}</p>
+      		<p>Total comments: {comments.length}</p>		
       		<p>TODO: Post voting mechanism.</p>
             <p>TODO: Functionality to edit or delete.</p>
-            <p>TODO: List comments.</p>
       		<ul>
              {comments.length > 0 &&
              comments.map((comment) => (
                <li key={comment.id}>
-      		     {comment.body}
+      		     {comment.body} <br />
+                 Vote score: {comment.voteScore} | Author: {comment.author}
                </li>
              ))
             }
