@@ -12,8 +12,8 @@ class PostList extends Component {
   componentDidMount() {
     const { dispatch, match } = this.props
     console.log(this.props)
-    dispatch(selectCategory(match.params.category))
-    dispatch(fetchPosts(match.params.category))
+    dispatch(selectCategory(match.params.category || 'all'))
+    dispatch(fetchPosts(match.params.category || 'all'))
   }
 
   handleCategoryClick(e, nextCategory) {

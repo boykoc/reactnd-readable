@@ -93,9 +93,13 @@ export function receiveComments(post, json) {
 /* Thunk Actions for async calls */  
 
 export function fetchPosts(category) {
+  let url = `${process.env.REACT_APP_BACKEND}/${category}/posts`
+  if (category === 'all') {
+    url = `${process.env.REACT_APP_BACKEND}/posts`
+  }
   return function (dispatch) {
     dispatch(requestPosts(category))
-    return fetch(`${process.env.REACT_APP_BACKEND}/${category}/posts`, 
+    return fetch(url, 
                  { headers: { 'Authorization': 'whatever-you-want' },
                  credentials: 'include' } )
       .then(
