@@ -111,6 +111,7 @@ export function fetchPosts(category) {
 export function fetchPost(post) {
   return function (dispatch) {
     dispatch(requestPost(post))
+    console.log('fetching')
     return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post}`, 
                  { headers: { 'Authorization': 'whatever-you-want' },
                  credentials: 'include' } )

@@ -21,7 +21,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
   <Router>
-	<Route path="/:category?" component={App} />
+	<App />
   </Router>
   </Provider>, 
   document.getElementById('root')

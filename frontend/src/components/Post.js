@@ -8,6 +8,7 @@ class Post extends Component {
   }
 
   componentDidMount() {
+    console.log("post")
     const { dispatch, selectedPost } = this.props
 	dispatch(fetchComments(selectedPost))  
   }
