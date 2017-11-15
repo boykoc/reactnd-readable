@@ -20,9 +20,9 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-  	<Router>
-  		<Route path="/" component={App} />
-    </Router>
+  <Router>
+	<Route path="/:category?" component={App} />
+  </Router>
   </Provider>, 
   document.getElementById('root')
 );

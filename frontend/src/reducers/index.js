@@ -3,7 +3,7 @@ import { SELECT_CATEGORY, REQUEST_POSTS, RECEIVE_POSTS } from '../actions'
 import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
 import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
 
-function selectedCategory(state = 'react', action) {
+function selectedCategory(state = 'all', action) {
   switch (action.type) {
     case SELECT_CATEGORY:
       return action.category

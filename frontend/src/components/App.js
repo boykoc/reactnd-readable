@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchPosts, selectPost, fetchPost } from '../actions';
-import { Link, Route } from 'react-router-dom'
+import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory } from '../actions';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import Post from './Post'
 
 class App extends Component {
   constructor(props) {
     super(props)
-    this.handleChange = this.handleChange.bind(this)
-    this.handlePostClick = this.handlePostClick.bind(this)
+    this.handleCategoryClick = this.handleCategoryClick.bind(this)
   }
 
   componentDidMount() {
-    const { dispatch, selectedCategory } = this.props
-    dispatch(fetchPosts(selectedCategory))
+    const { dispatch, match } = this.props
+    dispatch(selectCategory(match.params.category))
+    dispatch(fetchPosts(match.params.category))
   }
 
-  handleChange(nextCategory) {
-    this.props.dispatch(selectCategory(nextCategory))
+  handleCategoryClick(e, nextCategory) {
+    console.log(nextCategory)
+   	this.props.dispatch(selectCategory(nextCategory))
     this.props.dispatch(fetchPosts(nextCategory))
   }
   
@@ -29,20 +30,16 @@ class App extends Component {
   
   render() {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
-    const options = ['react', 'redux', 'udacity']
+    const options = ['all', 'react', 'redux', 'udacity']
     return (
-      <div>      
-		<Route exact path="/" render={() => (
+      <div>		
           <div>
             <span>
               <h1>{selectedCategory}</h1>
-              <select onChange={e => this.handleChange(e.target.value)} value={selectedCategory}>
-                {options.map(option => (
-                  <option value={option} key={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              {options.map(option => (
+    		    <p key={option}><Link to={option === 'all' ? '/' : `/${ option }`} onClick={e => this.handleCategoryClick(e, option)}>{option}</Link></p>
+              ))}     
+              
             </span>
 
             {isFetching && posts.length === 0 && <h2>Loading...</h2>}
@@ -51,7 +48,7 @@ class App extends Component {
              {posts.length > 0 &&
              posts.map((post) => (
                <li key={post.id}>
-                 <Link to={post.id} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
+                 <Link to={`/${selectedCategory}/${post.id}`} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
                  Author: {post.author} <br/>
                  Score: {post.voteScore}
                </li>
@@ -59,10 +56,9 @@ class App extends Component {
             }
             </ul>      
 		  </div>
-    	)} />
-      	
-		<Route path="/:postId" component={Post} />        
-      </div>
+    	   
+       	<Route path="/:category/:post" component={Post} />
+      </div>  
     );
   }
 }
@@ -76,12 +72,12 @@ function mapStateToProps(state) {
   } = postsByCategory[selectedCategory] || {
     isFetching: true,
     items: []
-  }
+  }  
   return {
     selectedCategory,
     posts,
     isFetching,
-    lastUpdated
+    lastUpdated    
   }
 }
 
