@@ -1,21 +1,48 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectPost, fetchPost, fetchComments } from '../actions';
+import { selectPost, fetchPost, fetchComments, pushPostVote, pushCommentVote } from '../actions';
 
 class Post extends Component {
   constructor(props) {
     super(props)
+    this.handleUpVote = this.handleUpVote.bind(this)
   }
 
   componentDidMount() {
-    console.log("post")
     const { dispatch, selectedPost } = this.props
 	dispatch(fetchComments(selectedPost))  
   }
   
+  handleUpVote(e, post_id) {
+   	this.props.dispatch(pushPostVote(post_id, 'upVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchPost(post_id))
+  }
+  
+  handleDownVote(e, post_id) {
+   	this.props.dispatch(pushPostVote(post_id, 'downVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchPost(post_id))
+  }  
+  
+    handleCommentUpVote(e, post_id, comment_id) {
+   	this.props.dispatch(pushCommentVote(comment_id, 'upVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchComments(post_id))
+  }
+  
+  handleCommentDownVote(e, post_id, comment_id) {
+   	this.props.dispatch(pushCommentVote(comment_id, 'downVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchComments(post_id))
+  }  
+  
   render() {
     const { post, selectedPost, isFetching, comments } = this.props
-    console.log(this.props)
     return (
       <div>
         {isFetching && !post.hasOwnProperty('id') && <h2>Loading...</h2>}
@@ -28,6 +55,8 @@ class Post extends Component {
             <p>Vote score: {post.voteScore}</p>
       		<p>Total comments: {comments.length}</p>		
       		<p>TODO: Post voting mechanism.</p>
+      		<p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
+			<p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
             <p>TODO: Functionality to edit or delete.</p>
       		<ul>
              {comments.length > 0 &&
@@ -35,6 +64,8 @@ class Post extends Component {
                <li key={comment.id}>
       		     {comment.body} <br />
                  Vote score: {comment.voteScore} | Author: {comment.author}
+				<p onClick={e => this.handleCommentUpVote(e, post.id, comment.id)}>Upvote</p>
+				<p onClick={e => this.handleCommentDownVote(e, post.id, comment.id)}>Downvote</p>
                </li>
              ))
             }

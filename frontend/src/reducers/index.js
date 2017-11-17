@@ -2,6 +2,8 @@ import { combineReducers } from 'redux'
 import { SELECT_CATEGORY, REQUEST_POSTS, RECEIVE_POSTS } from '../actions'
 import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
 import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
+import { SEND_POST_VOTE, COMPLETE_POST_VOTE } from '../actions'
+import { SEND_COMMENT_VOTE, COMPLETE_COMMENT_VOTE } from '../actions'
 
 function selectedCategory(state = 'all', action) {
   switch (action.type) {
@@ -79,6 +81,15 @@ function postDetails(state = {}, action) {
       return {...state, 
         post: post(action.post, action)
       }
+	case SEND_POST_VOTE:
+    case COMPLETE_POST_VOTE:  
+     /* return {
+        ...state,
+        post: {
+          ...state.post,
+          voteScore: state.post.voteScore
+        }      
+      }*/
     default: 
       return state
   }
@@ -116,8 +127,6 @@ function commentsByPost(state = {}, action) {
       return state
   }
 }
-
-
 
 
 

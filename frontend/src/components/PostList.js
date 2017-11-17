@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory } from '../actions';
+import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, pushPostVote } from '../actions';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 class PostList extends Component {
@@ -11,23 +11,35 @@ class PostList extends Component {
 
   componentDidMount() {
     const { dispatch, match } = this.props
-    console.log(this.props)
     dispatch(selectCategory(match.params.category || 'all'))
     dispatch(fetchPosts(match.params.category || 'all'))
   }
 
   handleCategoryClick(e, nextCategory) {
-    console.log(nextCategory)
    	this.props.dispatch(selectCategory(nextCategory))
     this.props.dispatch(fetchPosts(nextCategory))
   }
   
   handlePostClick(event, post) {
-    //event.preventDefault()
-    console.log(post)
     this.props.dispatch(selectPost(post))
     this.props.dispatch(fetchPost(post))
   }
+  
+  handleUpVote(e, post_id) {
+   	this.props.dispatch(pushPostVote(post_id, 'upVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchPosts(this.props.selectedCategory))
+  }
+  
+  handleDownVote(e, post_id) {
+   	this.props.dispatch(pushPostVote(post_id, 'downVote'))
+    // This is a basic implementaiton. I would rather update the store
+    // through the reducer
+    this.props.dispatch(fetchPosts(this.props.selectedCategory))
+  }  
+  
+
   
   render() {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
@@ -51,6 +63,8 @@ class PostList extends Component {
                  <Link to={`/${selectedCategory}/${post.id}`} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
                  Author: {post.author} <br/>
                  Score: {post.voteScore}
+                 <p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
+				 <p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
                </li>
              ))
             }
