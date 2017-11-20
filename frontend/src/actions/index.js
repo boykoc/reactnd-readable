@@ -170,6 +170,19 @@ export function createPost(post) {
   }
 }
 
+/**
+ * Edit Post
+ */
+
+export const EDIT_POST = 'EDIT_POST'
+
+export function editPost(post) {
+  return {
+    type: EDIT_POST,
+    post
+  }
+}
+
 /* Thunk Actions for async calls */  
 
 export function fetchPosts(category) {
@@ -301,6 +314,27 @@ export function pushPostCreate(post, category) {
       )
       .then(json =>             
         dispatch(createPost(json)) 
+      )
+  }
+}
+
+export function pushPostEdit(post, post_id) {
+  console.log(post)
+  return function (dispatch) {
+    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'put',
+                   body: JSON.stringify( {title: post.title,
+                                          body: post.body} ) } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(editPost(json)) 
       )
   }
 }

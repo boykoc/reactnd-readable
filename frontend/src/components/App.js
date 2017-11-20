@@ -4,7 +4,8 @@ import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory } fro
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import PostList from './PostList'
 import Post from './Post'
-import PostCreateEdit from './PostCreateEdit'
+import PostCreate from './PostCreate'
+import PostEdit from './PostEdit'
 
 class App extends Component {
   constructor(props) {
@@ -16,8 +17,9 @@ class App extends Component {
       <div>		
       	<Route exact path="/" component={PostList} />	
       	<Route exact path="/:category" component={PostList} />
-      	<Route path="/:category/:post" component={Post} />		
-        <Route path="/:category/post/create" component={PostCreateEdit} />		
+      	<Route exact path="/:category/:post" component={Post} />		
+        <Route path="/:category/post/create" component={PostCreate} />		
+        <Route exact path="/:category/:post/edit" component={PostEdit} />	
       </div>  
     );
   }

@@ -5,7 +5,7 @@ import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
 import { SEND_POST_VOTE, COMPLETE_POST_VOTE } from '../actions'
 import { SEND_COMMENT_VOTE, COMPLETE_COMMENT_VOTE } from '../actions'
 import { SEND_DELETE_POST, COMPLETE_DELETE_POST } from '../actions'
-import { CREATE_POST } from '../actions'
+import { CREATE_POST, EDIT_POST } from '../actions'
 
 function selectedCategory(state = 'all', action) {
   switch (action.type) {
@@ -47,6 +47,10 @@ function postsByCategory(state = {}, action) {
       return {...state,
         [action.post.category]: [...posts, action.post]
       }
+    case EDIT_POST:
+      return {...state,
+        [action.post.category]: [...posts, action.post]
+      }      
     default: 
       return state
   }
