@@ -1,3 +1,5 @@
+import uuid from 'uuid'
+
 /* Following Redux Documentation structure to fetch async data. */
 
 /* Standard Actions */
@@ -133,7 +135,40 @@ export function completeCommentVote(comment_id, json) {
   }
 }
 
+/**
+ * Delete Post
+ */
 
+export const SEND_DELETE_POST = 'SEND_DELETE_POST'
+
+export function sendDeletePost(post_id) {
+  return {
+    type: SEND_DELETE_POST,
+    post_id   
+  }
+}
+
+export const COMPLETE_DELETE_POST = 'COMPLETE_DELETE_POST'
+
+export function completeDeletePost(post_id, json) {
+  return {
+    type: COMPLETE_DELETE_POST,
+    post_id
+  }
+}
+
+/**
+ * Create Post
+ */
+
+export const CREATE_POST = 'CREATE_POST'
+
+export function createPost(post) {
+  return {
+    type: CREATE_POST,
+    post
+  }
+}
 
 /* Thunk Actions for async calls */  
 
@@ -225,6 +260,47 @@ export function pushCommentVote(comment_id, vote) {
       )
       .then(json =>             
         dispatch(completeCommentVote(comment_id, json)) 
+      )
+  }
+}
+
+export function pushPostDelete(post_id) {
+  return function (dispatch) {
+    dispatch(sendDeletePost(post_id))
+    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'delete' } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(completeDeletePost(post_id, json)) 
+      )
+  }
+}
+
+export function pushPostCreate(post, category) {
+  return function (dispatch) {
+    return fetch(`${process.env.REACT_APP_BACKEND}/posts`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'post',
+                   body: JSON.stringify( {...post, 
+                                          'id': uuid(),
+                                          timestampe: Date.now(),
+                                          category: category} ) } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(createPost(json)) 
       )
   }
 }

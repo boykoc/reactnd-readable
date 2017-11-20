@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectPost, fetchPost, fetchComments, pushPostVote, pushCommentVote } from '../actions';
+import { selectPost, fetchPost, fetchComments, pushPostVote, pushCommentVote, pushPostDelete } from '../actions';
 
 class Post extends Component {
   constructor(props) {
@@ -41,6 +41,10 @@ class Post extends Component {
     this.props.dispatch(fetchComments(post_id))
   }  
   
+  onDeletePost(post_id) {
+  	this.props.dispatch(pushPostDelete(post_id))
+  }
+  
   render() {
     const { post, selectedPost, isFetching, comments } = this.props
     return (
@@ -54,10 +58,10 @@ class Post extends Component {
 	        <p>Author: {post.author}</p>
             <p>Vote score: {post.voteScore}</p>
       		<p>Total comments: {comments.length}</p>		
-      		<p>TODO: Post voting mechanism.</p>
       		<p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
 			<p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
             <p>TODO: Functionality to edit or delete.</p>
+			<button onClick={() => this.onDeletePost(post.id)}>Delete post</button>
       		<ul>
              {comments.length > 0 &&
              comments.map((comment) => (

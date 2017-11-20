@@ -4,6 +4,8 @@ import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
 import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
 import { SEND_POST_VOTE, COMPLETE_POST_VOTE } from '../actions'
 import { SEND_COMMENT_VOTE, COMPLETE_COMMENT_VOTE } from '../actions'
+import { SEND_DELETE_POST, COMPLETE_DELETE_POST } from '../actions'
+import { CREATE_POST } from '../actions'
 
 function selectedCategory(state = 'all', action) {
   switch (action.type) {
@@ -34,9 +36,16 @@ function posts( state = { isFetching: false, items: []}, action) {
 function postsByCategory(state = {}, action) {
   switch (action.type) {
     case RECEIVE_POSTS:
+    case SEND_DELETE_POST:
+      //TODO: Update state.
+    case COMPLETE_DELETE_POST:
     case REQUEST_POSTS:
       return {...state, 
         [action.category]: posts(state[action.category], action)
+      }
+    case CREATE_POST:
+      return {...state,
+        [action.post.category]: [...posts, action.post]
       }
     default: 
       return state
