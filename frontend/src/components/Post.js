@@ -10,8 +10,10 @@ class Post extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedPost } = this.props
-	dispatch(fetchComments(selectedPost))  
+    const { dispatch, selectedPost, match } = this.props
+	dispatch(fetchComments(match.params.post))
+    this.props.dispatch(selectPost(match.params.post))
+    this.props.dispatch(fetchPost(match.params.post))  
   }
   
   handleUpVote(e, post_id) {
