@@ -16,66 +16,73 @@ class PostList extends Component {
   }
 
   handleCategoryClick(e, nextCategory) {
-   	this.props.dispatch(selectCategory(nextCategory))
+    this.props.dispatch(selectCategory(nextCategory))
     this.props.dispatch(fetchPosts(nextCategory))
   }
-  
+
   handlePostClick(event, post) {
     this.props.dispatch(selectPost(post))
     this.props.dispatch(fetchPost(post))
   }
-  
+
   handleUpVote(e, post_id) {
-   	this.props.dispatch(pushPostVote(post_id, 'upVote'))
+    this.props.dispatch(pushPostVote(post_id, 'upVote'))
     // This is a basic implementaiton. I would rather update the store
     // through the reducer
     this.props.dispatch(fetchPosts(this.props.selectedCategory))
   }
-  
+
   handleDownVote(e, post_id) {
-   	this.props.dispatch(pushPostVote(post_id, 'downVote'))
+    this.props.dispatch(pushPostVote(post_id, 'downVote'))
     // This is a basic implementaiton. I would rather update the store
     // through the reducer
     this.props.dispatch(fetchPosts(this.props.selectedCategory))
   }  
-  
+
   onDeletePost(post_id) {
-  	this.props.dispatch(pushPostDelete(post_id))
+    this.props.dispatch(pushPostDelete(post_id))
   }
-  
+
   render() {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
     const options = ['all', 'react', 'redux', 'udacity']
     return (
-          <div>
-            <span>
-              <h1>{selectedCategory}</h1>
-              {options.map(option => (
-    		    <p key={option}><Link to={option === 'all' ? '/' : `/${ option }`} onClick={e => this.handleCategoryClick(e, option)}>{option}</Link></p>
-              ))}     
-              
-            </span>
-
-            {isFetching && posts.length === 0 && <h2>Loading...</h2>}
-            {!isFetching && posts.length === 0 && <h2>No posts founds.</h2>}
-            <ul>
-             {posts.length > 0 &&
-             posts.map((post) => (
-               <li key={post.id}>
-                 <Link to={`/${selectedCategory}/${post.id}`} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
-                 Author: {post.author} <br/>
-                 Score: {post.voteScore}
-                 <p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
-				 <p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
-				<button onClick={() => this.onDeletePost(post.id)}>Delete post</button>
-               </li>
-             ))
+      <div>
+        <span>
+          <h1>{selectedCategory}</h1>
+          {options.map(option => (
+            <p key={option}>
+              <Link to={option === 'all' ? '/' : `/${ option }`} 
+                onClick={e => this.handleCategoryClick(e, option)}>
+                {option}
+              </Link>
+            </p>
+          ))}     
+        </span>
+        {isFetching && posts.length === 0 && <h2>Loading...</h2>}
+        {!isFetching && posts.length === 0 && <h2>No posts founds.</h2>}
+        <div>
+          {selectedCategory !== 'all' &&
+            <Link to={`/${selectedCategory}/post/create`}>Create Post</Link>
+          }
+          <ul>
+            {posts.length > 0 &&
+              posts.map((post) => (
+                <li key={post.id}>
+                  <Link to={`/${selectedCategory}/${post.id}`} onClick={e => this.handlePostClick(e, post.id)}>{post.title}</Link> <br/>
+                  Author: {post.author} <br/>
+                  Score: {post.voteScore}
+                  <p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
+                  <p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
+                  <button onClick={() => this.onDeletePost(post.id)}>Delete Post</button>
+				  <Link to={`${selectedCategory}/${post.id}/edit`}>Edit Post</Link>
+                </li>
+              ))
             }
-            </ul>      
-	
-</div>
-		
-    );
+          </ul>   
+        </div>
+      </div>
+    )
   }
 }
 

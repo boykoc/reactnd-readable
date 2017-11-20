@@ -21,9 +21,9 @@ class PostEdit extends Component {
     
   handleSubmit = (e) => {
     e.preventDefault()
-    const values = serializeForm(e.target, {hash: true })
-    
+    const values = serializeForm(e.target, {hash: true })    
     this.props.dispatch(pushPostEdit(values, this.props.post.id))
+    this.props.history.push(`/${this.props.match.params.category}`)    
   }
 
   handleTitleChange = (value) => {

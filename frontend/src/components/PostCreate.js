@@ -8,6 +8,7 @@ class PostCreate extends Component {
     e.preventDefault()
     const values = serializeForm(e.target, {hash: true })    
     this.props.dispatch(pushPostCreate(values, this.props.match.params.category))
+    this.props.history.push(`/${this.props.match.params.category}`)
   }
   
   render() {    

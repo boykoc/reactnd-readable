@@ -67,6 +67,7 @@ class Post extends Component {
 			<p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
             <p>TODO: Functionality to edit or delete.</p>
 			<button onClick={() => this.onDeletePost(post.id)}>Delete post</button>
+			<Link to={`${post.id}/edit`}>Edit Post</Link>
             <Link to={`${post.id}/comment/create`}>Create comment</Link>
       		<ul>
              {comments.length > 0 &&

@@ -8,6 +8,7 @@ class CommentCreate extends Component {
     e.preventDefault()
     const values = serializeForm(e.target, {hash: true })    
     this.props.dispatch(pushCommentCreate(values, this.props.match.params.post))
+    this.props.history.push(`/${this.props.match.params.category}/${this.props.match.params.post}`)
   }
   
   render() {    
