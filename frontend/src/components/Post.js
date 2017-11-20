@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectPost, fetchPost, fetchComments, pushPostVote, pushCommentVote, pushPostDelete } from '../actions';
+import { selectPost, fetchPost, fetchComments, pushPostVote, pushCommentVote, pushPostDelete, pushCommentDelete } from '../actions';
+import { Link } from 'react-router-dom'
 
 class Post extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class Post extends Component {
     this.props.dispatch(fetchPost(post_id))
   }  
   
-    handleCommentUpVote(e, post_id, comment_id) {
+  handleCommentUpVote(e, post_id, comment_id) {
    	this.props.dispatch(pushCommentVote(comment_id, 'upVote'))
     // This is a basic implementaiton. I would rather update the store
     // through the reducer
@@ -43,6 +44,10 @@ class Post extends Component {
   
   onDeletePost(post_id) {
   	this.props.dispatch(pushPostDelete(post_id))
+  }
+  
+  onDeleteComment(comment_id) {
+  	this.props.dispatch(pushCommentDelete(comment_id))
   }
   
   render() {
@@ -62,6 +67,7 @@ class Post extends Component {
 			<p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
             <p>TODO: Functionality to edit or delete.</p>
 			<button onClick={() => this.onDeletePost(post.id)}>Delete post</button>
+            <Link to={`${post.id}/comment/create`}>Create comment</Link>
       		<ul>
              {comments.length > 0 &&
              comments.map((comment) => (
@@ -70,6 +76,8 @@ class Post extends Component {
                  Vote score: {comment.voteScore} | Author: {comment.author}
 				<p onClick={e => this.handleCommentUpVote(e, post.id, comment.id)}>Upvote</p>
 				<p onClick={e => this.handleCommentDownVote(e, post.id, comment.id)}>Downvote</p>
+				<button onClick={() => this.onDeleteComment(comment.id)}>Delete</button>
+				<Link to={`${post.id}/${comment.id}/edit`}>Edit comment</Link>
                </li>
              ))
             }

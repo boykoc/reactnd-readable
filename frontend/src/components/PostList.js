@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, pushPostVote } from '../actions';
+import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, pushPostVote, pushPostDelete } from '../actions';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 class PostList extends Component {
@@ -39,7 +39,9 @@ class PostList extends Component {
     this.props.dispatch(fetchPosts(this.props.selectedCategory))
   }  
   
-
+  onDeletePost(post_id) {
+  	this.props.dispatch(pushPostDelete(post_id))
+  }
   
   render() {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
@@ -65,6 +67,7 @@ class PostList extends Component {
                  Score: {post.voteScore}
                  <p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
 				 <p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
+				<button onClick={() => this.onDeletePost(post.id)}>Delete post</button>
                </li>
              ))
             }

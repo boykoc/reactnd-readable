@@ -2,10 +2,13 @@ import { combineReducers } from 'redux'
 import { SELECT_CATEGORY, REQUEST_POSTS, RECEIVE_POSTS } from '../actions'
 import { SELECT_POST, REQUEST_POST, RECEIVE_POST } from '../actions'
 import { REQUEST_COMMENTS, RECEIVE_COMMENTS } from '../actions'
+import { REQUEST_COMMENT, RECEIVE_COMMENT } from '../actions'
 import { SEND_POST_VOTE, COMPLETE_POST_VOTE } from '../actions'
 import { SEND_COMMENT_VOTE, COMPLETE_COMMENT_VOTE } from '../actions'
 import { SEND_DELETE_POST, COMPLETE_DELETE_POST } from '../actions'
 import { CREATE_POST, EDIT_POST } from '../actions'
+import { SEND_DELETE_COMMENT, COMPLETE_DELETE_COMMENT } from '../actions'
+import { CREATE_COMMENT, EDIT_COMMENT } from '../actions'
 
 function selectedCategory(state = 'all', action) {
   switch (action.type) {
@@ -109,7 +112,35 @@ function postDetails(state = {}, action) {
 }
 
 
+function commentDetails(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_COMMENT:
+    case REQUEST_COMMENT:
+      return {...state, 
+        post: comment(action.post, action)
+      }
+    default: 
+      return state
+  }
+}
 
+function comment( state = { isFetching: false}, action) {
+  switch (action.type) {
+    case REQUEST_POST:
+      return {...state, 
+      	isFetching: true,
+        comment: {}
+      }
+    case RECEIVE_POST:
+      return {...state, 
+        isFetching: false,
+        comment: action.comment,
+        lastUpdated: action.recievedAt
+      }
+    default:
+      return state
+  }
+}
 
 
 function comments( state = { isFetching: false, comments: []}, action) {
@@ -136,6 +167,11 @@ function commentsByPost(state = {}, action) {
       return {...state, 
         [action.post]: comments(state[action.post], action)
       }
+	case SEND_DELETE_POST:
+      //TODO: Update state.
+    case COMPLETE_DELETE_POST:  
+    case CREATE_COMMENT:
+    case EDIT_COMMENT:
     default: 
       return state
   }
@@ -148,7 +184,8 @@ const rootReducer = combineReducers({
   selectedCategory, 
   postDetails,
   selectedPost, 
-  commentsByPost
+  commentsByPost,
+  commentDetails
 })
 
 export default rootReducer

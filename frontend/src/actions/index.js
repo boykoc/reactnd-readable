@@ -94,6 +94,29 @@ export function receiveComments(post, json) {
 }
 
 /**
+ * Get Comment
+ */
+
+export const REQUEST_COMMENT = 'REQUEST_COMMENT'
+
+export function requestComment(comment) {
+  return {
+    type: REQUEST_COMMENT,
+    comment
+  }
+}
+
+export const RECEIVE_COMMENT = 'RECEIVE_COMMENT'
+
+export function receiveComment(comment, json) {
+  return {
+    type: RECEIVE_COMMENT,
+    comment: json,
+    receivedAt: Date.now()
+  }
+}
+
+/**
  * Voting
  */
 
@@ -183,6 +206,62 @@ export function editPost(post) {
   }
 }
 
+
+
+
+/**
+ * Delete Comment
+ */
+
+export const SEND_DELETE_COMMENT = 'SEND_DELETE_COMMENT'
+
+export function sendDeleteComment(comment_id) {
+  return {
+    type: SEND_DELETE_COMMENT,
+    comment_id   
+  }
+}
+
+export const COMPLETE_DELETE_COMMENT = 'COMPLETE_DELETE_COMMENT'
+
+export function completeDeleteComment(comment_id, json) {
+  return {
+    type: COMPLETE_DELETE_COMMENT,
+    comment_id
+  }
+}
+
+/**
+ * Create Comment
+ */
+
+export const CREATE_COMMENT = 'CREATE_COMMENT'
+
+export function createComment(comment) {
+  return {
+    type: CREATE_COMMENT,
+    comment
+  }
+}
+
+/**
+ * Edit Comment
+ */
+
+export const EDIT_COMMENT = 'EDIT_COMMENT'
+
+export function editComment(comment) {
+  return {
+    type: EDIT_COMMENT,
+    comment
+  }
+}
+
+
+
+
+
+
 /* Thunk Actions for async calls */  
 
 export function fetchPosts(category) {
@@ -237,6 +316,22 @@ export function fetchComments(post) {
   }
 }
 
+export function fetchComment(comment) {
+  return function (dispatch) {
+    dispatch(requestComment(comment))
+    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment}`, 
+                 { headers: { 'Authorization': 'whatever-you-want' },
+                 credentials: 'include' } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(receiveComment(comment, json)) 
+      )
+  }
+}
+
 export function pushPostVote(post_id, vote) {
   return function (dispatch) {
     dispatch(sendPostVote(post_id, vote))
@@ -287,11 +382,11 @@ export function pushPostDelete(post_id) {
                    credentials: 'include',
                    method: 'delete' } )
       .then(
-        response => response.json(),
+        response => response,
         error => console.log('An error occured.', error)
       )
-      .then(json =>             
-        dispatch(completeDeletePost(post_id, json)) 
+      .then(response =>             
+        dispatch(completeDeletePost(post_id, response)) 
       )
   }
 }
@@ -335,6 +430,67 @@ export function pushPostEdit(post, post_id) {
       )
       .then(json =>             
         dispatch(editPost(json)) 
+      )
+  }
+}
+
+export function pushCommentDelete(comment_id) {
+  return function (dispatch) {
+    dispatch(sendDeleteComment(comment_id))
+    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'delete' } )
+      .then(
+        response => response,
+        error => console.log('An error occured.', error)
+      )
+      .then(response =>             
+        dispatch(completeDeleteComment(comment_id, response)) 
+      )
+  }
+}
+
+export function pushCommentCreate(comment, post_id) {
+  return function (dispatch) {
+    return fetch(`${process.env.REACT_APP_BACKEND}/comments`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'post',
+                   body: JSON.stringify( {...comment, 
+                                          'id': uuid(),
+                                          timestamp: Date.now(),
+                                          parentId: post_id} ) } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(createComment(json)) 
+      )
+  }
+}
+
+export function pushCommentEdit(comment, comment_id) {
+  return function (dispatch) {
+    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
+                 { headers: { 'Authorization': 'whatever-you-want', 
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'},
+                   credentials: 'include',
+                   method: 'put',
+                   body: JSON.stringify( { body: comment.body,
+                                           timestamp: Date.now() } ) } )
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>             
+        dispatch(editComment(json)) 
       )
   }
 }
