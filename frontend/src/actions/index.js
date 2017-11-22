@@ -257,9 +257,38 @@ export function editComment(comment) {
   }
 }
 
+/**
+ * Set post sort filter.
+ */
 
+export const SET_SORT_FILTER = 'SET_SORT_FILTER'
 
+export function setSortFilter(filter) {
+  return {
+    type: SET_SORT_FILTER,
+    filter
+  }
+}
 
+export const SORT_BY_DATE = 'SORT_BY_DATE'
+
+export function sortByDate(posts, category) {
+  return {
+  	type: SORT_BY_DATE,
+    posts,
+    category
+  }
+}
+
+export const SORT_BY_VOTE = 'SORT_BY_VOTE'
+
+export function sortByVote(posts, category) {
+  return {
+    type: SORT_BY_VOTE,
+    posts,
+    category
+  }
+}
 
 
 /* Thunk Actions for async calls */  
@@ -401,7 +430,7 @@ export function pushPostCreate(post, category) {
                    method: 'post',
                    body: JSON.stringify( {...post, 
                                           'id': uuid(),
-                                          timestampe: Date.now(),
+                                          timestamp: Date.now(),
                                           category: category} ) } )
       .then(
         response => response.json(),

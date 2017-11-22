@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, pushPostVote, pushPostDelete } from '../actions';
+import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, pushPostVote, pushPostDelete, setSortFilter, sortByDate, sortByVote } from '../actions';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
-
+ 
 class PostList extends Component {
   constructor(props) {
     super(props)
@@ -41,15 +41,30 @@ class PostList extends Component {
 
   onDeletePost(post_id) {
     this.props.dispatch(pushPostDelete(post_id))
-  }
-
+  }     
+  
+  handleSortClick(filter) {
+    this.props.dispatch(setSortFilter(filter))
+    if (filter === 'SORT_BY_DATE') {
+      this.props.dispatch(sortByDate(this.props.posts, this.props.selectedCategory))
+    } else {
+      this.props.dispatch(sortByVote(this.props.posts, this.props.selectedCategory))
+    }
+  }    
+ 
+  
   render() {
     const { selectedCategory, posts, isFetching, lastUpdated } = this.props
     const options = ['all', 'react', 'redux', 'udacity']
+    console.log(posts)
     return (
       <div>
         <span>
           <h1>{selectedCategory}</h1>
+      	  <div>
+            <button onClick={() => this.handleSortClick('SORT_BY_DATE')}>Sort by Date</button>
+      	    <button onClick={() => this.handleSortClick('SORT_BY_SCORE')}>Sort by Score</button>
+      	  </div>
           {options.map(option => (
             <p key={option}>
               <Link to={option === 'all' ? '/' : `/${ option }`} 
@@ -86,22 +101,4 @@ class PostList extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const { selectedCategory, postsByCategory } = state
-  const {
-    isFetching,
-    lastUpdated,
-    items: posts
-  } = postsByCategory[selectedCategory] || {
-    isFetching: true,
-    items: []
-  }  
-  return {
-    selectedCategory,
-    posts,
-    isFetching,
-    lastUpdated    
-  }
-}
-
-export default connect(mapStateToProps)(PostList);
+export default PostList;

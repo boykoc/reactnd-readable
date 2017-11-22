@@ -9,6 +9,7 @@ import { SEND_DELETE_POST, COMPLETE_DELETE_POST } from '../actions'
 import { CREATE_POST, EDIT_POST } from '../actions'
 import { SEND_DELETE_COMMENT, COMPLETE_DELETE_COMMENT } from '../actions'
 import { CREATE_COMMENT, EDIT_COMMENT } from '../actions'
+import { SET_SORT_FILTER, SORT_BY_DATE, SORT_BY_VOTE } from '../actions'
 
 function selectedCategory(state = 'all', action) {
   switch (action.type) {
@@ -30,6 +31,16 @@ function posts( state = { isFetching: false, items: []}, action) {
         isFetching: false,
         items: action.posts,
         lastUpdated: action.recievedAt
+      }
+    case SORT_BY_DATE:
+      console.log('by date')
+      return {...state, 
+        items: action.posts.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })
+      } 
+    case SORT_BY_VOTE:
+      console.log('by vote')
+      return {...state, 
+        items: action.posts.slice().sort(function (a, b) { return b.voteScore - a.voteScore; })
       }
     default:
       return state
@@ -53,7 +64,15 @@ function postsByCategory(state = {}, action) {
     case EDIT_POST:
       return {...state,
         [action.post.category]: [...posts, action.post]
-      }      
+      }    
+    case SORT_BY_DATE:
+      return {...state, 
+        [action.category]: posts(state[action.category], action)
+      }
+    case SORT_BY_VOTE:
+      return {...state, 
+        [action.category]: posts(state[action.category], action)
+      }
     default: 
       return state
   }
@@ -177,7 +196,14 @@ function commentsByPost(state = {}, action) {
   }
 }
 
-
+function sortFilter(state = 'SORT_BY_DATE', action) {
+  switch (action.type) {
+    case SET_SORT_FILTER:
+      return action.filter
+    default:
+      return state
+  }
+}
 
 const rootReducer = combineReducers({
   postsByCategory,
@@ -185,7 +211,8 @@ const rootReducer = combineReducers({
   postDetails,
   selectedPost, 
   commentsByPost,
-  commentDetails
+  commentDetails,
+  sortFilter
 })
 
 export default rootReducer
