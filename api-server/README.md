@@ -1,4 +1,6 @@
-# API Server
+# Readable API Server
+
+**Please refer to the [master readme](../README.md) for install instructions.**
 
 To install and start the API server, run the following commands in this directory:
 
