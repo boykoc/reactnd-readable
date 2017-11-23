@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectPost, fetchPost, pushCommentEdit } from '../actions';
 import serializeForm from 'form-serialize'
+import { Link } from 'react-router-dom'
+import ArrowLeftIcon from 'react-icons/lib/fa/arrow-left'
 
 class CommentEdit extends Component {  
   
@@ -14,7 +16,7 @@ class CommentEdit extends Component {
       comment: {
         body: 'body'
       }
-  	}
+    }
   }
     
   handleSubmit = (e) => {
@@ -32,35 +34,36 @@ class CommentEdit extends Component {
     const { dispatch, selectedPost, post } = this.props
     if (this.props.comments.length > 0) {
       this.setState({ comment: this.props.comments.filter((c) => c.id === this.props.match.params.comment)[0] })
-	} else {
-	  // Fetch comment.
+    } else {
+      // Fetch comment.
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-  	this.setState({ post: { title: nextProps.post.title } } )
-	this.setState({ post: { body: nextProps.post.body } } )
-  }
 
   render() {    
     return (
       <div>
-        <h1>Edit Comment</h1> 
-        <form onSubmit={this.handleSubmit}>       	  
-          <input type="text" name="body" placeholder="body" value={this.state.comment.body} onChange={e => this.handleBodyChange(e.target.value)}/>
-    	  <button>Edit Comment</button>
-    	</form>
+        <div className='nav'>
+          <Link to={`/${this.props.selectedCategory}/${this.props.selectedPost}`}><ArrowLeftIcon size={30} fill={'#02b3e4'}/></Link>
+          <h1 className='title-category'>Edit Comment</h1>
+        </div>  
+        <form onSubmit={this.handleSubmit} className="create-posts-form">  
+          <div className="create-posts-details">
+            <input type="text" name="body" placeholder="body" value={this.state.comment.body} onChange={e => this.handleBodyChange(e.target.value)}/>
+            <button className="grey-button">Edit Comment</button>
+          </div>
+        </form>
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
-  const { selectedPost, postDetails, commentsByPost, commentDetails } = state
+  const { selectedPost, postDetails, commentsByPost, commentDetails, selectedCategory } = state
   const { post, isFetching } = postDetails.post || { isFetching: false, post: {} }
   const { comments } = commentsByPost[selectedPost] || { isFetching: false, comments: [] }
   return {
-    selectedPost, post, isFetching, comments, commentDetails
+    selectedPost, post, isFetching, comments, commentDetails, selectedCategory
   }  
 }
 

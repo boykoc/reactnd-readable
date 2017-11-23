@@ -24,7 +24,7 @@ function posts( state = { isFetching: false, items: []}, action) {
   switch (action.type) {
     case REQUEST_POSTS:
       return {...state, 
-      	isFetching: true
+        isFetching: true
       }
     case RECEIVE_POSTS:
       return {...state, 
@@ -33,14 +33,16 @@ function posts( state = { isFetching: false, items: []}, action) {
         lastUpdated: action.recievedAt
       }
     case SORT_BY_DATE:
-      console.log('by date')
       return {...state, 
         items: action.posts.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })
       } 
     case SORT_BY_VOTE:
-      console.log('by vote')
       return {...state, 
         items: action.posts.slice().sort(function (a, b) { return b.voteScore - a.voteScore; })
+      }
+    case COMPLETE_DELETE_POST:
+      return {...state, 
+        items: action.posts.filter((post) => post.id !== action.post_id)
       }
     default:
       return state
@@ -51,8 +53,10 @@ function postsByCategory(state = {}, action) {
   switch (action.type) {
     case RECEIVE_POSTS:
     case SEND_DELETE_POST:
-      //TODO: Update state.
     case COMPLETE_DELETE_POST:
+      return {...state, 
+        [action.category]: posts(state[action.category], action)
+      }
     case REQUEST_POSTS:
       return {...state, 
         [action.category]: posts(state[action.category], action)
@@ -62,9 +66,6 @@ function postsByCategory(state = {}, action) {
         [action.post.category]: [...posts, action.post]
       }
     case EDIT_POST:
-      return {...state,
-        [action.post.category]: [...posts, action.post]
-      }    
     case SORT_BY_DATE:
       return {...state, 
         [action.category]: posts(state[action.category], action)
@@ -77,10 +78,6 @@ function postsByCategory(state = {}, action) {
       return state
   }
 }
-
-
-
-
 
 function selectedPost(state = {}, action) {
   switch (action.type) {
@@ -95,7 +92,7 @@ function post( state = { isFetching: false}, action) {
   switch (action.type) {
     case REQUEST_POST:
       return {...state, 
-      	isFetching: true,
+        isFetching: true,
         post: {}
       }
     case RECEIVE_POST:
@@ -116,7 +113,7 @@ function postDetails(state = {}, action) {
       return {...state, 
         post: post(action.post, action)
       }
-	case SEND_POST_VOTE:
+  case SEND_POST_VOTE:
     case COMPLETE_POST_VOTE:  
      /* return {
         ...state,
@@ -147,7 +144,7 @@ function comment( state = { isFetching: false}, action) {
   switch (action.type) {
     case REQUEST_POST:
       return {...state, 
-      	isFetching: true,
+        isFetching: true,
         comment: {}
       }
     case RECEIVE_POST:
@@ -166,13 +163,17 @@ function comments( state = { isFetching: false, comments: []}, action) {
   switch (action.type) {
     case REQUEST_COMMENTS:
       return {...state, 
-      	isFetching: true
+        isFetching: true
       }
     case RECEIVE_COMMENTS:
       return {...state, 
         isFetching: false,
         comments: action.comments,
         lastUpdated: action.recievedAt
+      }
+	case COMPLETE_DELETE_COMMENT:      
+      return {...state, 
+        comments: action.comments.filter((comment) => comment.id !== action.comment_id)
       }
     default:
       return state
@@ -186,9 +187,11 @@ function commentsByPost(state = {}, action) {
       return {...state, 
         [action.post]: comments(state[action.post], action)
       }
-	case SEND_DELETE_POST:
-      //TODO: Update state.
-    case COMPLETE_DELETE_POST:  
+    case SEND_DELETE_COMMENT:
+    case COMPLETE_DELETE_COMMENT:
+      return {...state, 
+        [action.post]: comments(state[action.post], action)
+      }      
     case CREATE_COMMENT:
     case EDIT_COMMENT:
     default: 

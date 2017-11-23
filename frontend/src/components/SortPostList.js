@@ -4,17 +4,6 @@ import { selectCategory, fetchPosts, selectPost, fetchPost, updateCategory, push
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import PostList from './PostList'
 
-/*function getSortedPosts(posts, filter) {
-  switch (filter) {
-    case 'SORT_BY_DATE':
-      return posts.sort(function (a, b) { return a.timestamp - b.timestamp; })
-    case 'SORT_BY_SCORE':
-      return posts.sort(function (a, b) { return a.voteScore - b.voteScore; } )
-    default:
-      return posts
-  }
-}*/
-
 function mapStateToProps(state) {
   const { selectedCategory, postsByCategory } = state
   const {

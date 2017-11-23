@@ -173,10 +173,12 @@ export function sendDeletePost(post_id) {
 
 export const COMPLETE_DELETE_POST = 'COMPLETE_DELETE_POST'
 
-export function completeDeletePost(post_id, json) {
+export function completeDeletePost(post_id, posts, category, json) {
   return {
     type: COMPLETE_DELETE_POST,
-    post_id
+    post_id,
+    posts,
+    category
   }
 }
 
@@ -224,10 +226,12 @@ export function sendDeleteComment(comment_id) {
 
 export const COMPLETE_DELETE_COMMENT = 'COMPLETE_DELETE_COMMENT'
 
-export function completeDeleteComment(comment_id, json) {
+export function completeDeleteComment(post, comment_id, comments, json) {
   return {
     type: COMPLETE_DELETE_COMMENT,
-    comment_id
+    comment_id,
+    post,
+    comments
   }
 }
 
@@ -401,7 +405,7 @@ export function pushCommentVote(comment_id, vote) {
   }
 }
 
-export function pushPostDelete(post_id) {
+export function pushPostDelete(post_id, posts, category) {
   return function (dispatch) {
     dispatch(sendDeletePost(post_id))
     return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
@@ -415,7 +419,7 @@ export function pushPostDelete(post_id) {
         error => console.log('An error occured.', error)
       )
       .then(response =>             
-        dispatch(completeDeletePost(post_id, response)) 
+        dispatch(completeDeletePost(post_id, posts, category, response)) 
       )
   }
 }
@@ -463,7 +467,7 @@ export function pushPostEdit(post, post_id) {
   }
 }
 
-export function pushCommentDelete(comment_id) {
+export function pushCommentDelete(post, comment_id, comments) {
   return function (dispatch) {
     dispatch(sendDeleteComment(comment_id))
     return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
@@ -477,7 +481,7 @@ export function pushCommentDelete(comment_id) {
         error => console.log('An error occured.', error)
       )
       .then(response =>             
-        dispatch(completeDeleteComment(comment_id, response)) 
+        dispatch(completeDeleteComment(post, comment_id, comments, response)) 
       )
   }
 }

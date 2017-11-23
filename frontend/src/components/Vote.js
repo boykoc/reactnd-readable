@@ -11,7 +11,7 @@ class Post extends Component {
     return (
       <div>
         <p onClick={e => this.handleUpVote(e, post.id)}>Upvote</p>
-		<p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
+        <p onClick={e => this.handleDownVote(e, post.id)}>Downvote</p>
       </div>
     )
   }
