@@ -106,7 +106,7 @@ class PostList extends Component {
                     </p>                    
                   </div>
                   <Link 
-                    to={`${selectedCategory}/${post.id}/edit`} 
+                    to={`${selectedCategory}/${post.id}/edit`}					
                     className='post-remove'><EditIcon size={30} fill={'#02b3e4'}/></Link>
                     <button 
                       className='post-remove' 

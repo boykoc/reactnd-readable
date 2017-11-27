@@ -15,8 +15,14 @@ class PostEdit extends Component {
     
     this.state = {
       post: {
-        title: 'title',
-        body: 'body'
+        author: "thingtwo",
+        body: "Everyone says so ", 
+        category: "react", 
+        deleted: false,
+        id: "8xf0y6ziyjabvozdd253nd", 
+        timestamp: Date.now(),
+        title: "title",
+        voteScore: 0
       }
     }
   }
@@ -29,22 +35,27 @@ class PostEdit extends Component {
   }
 
   handleTitleChange = (value) => {
-    this.setState({ post: { title: value } })
+    this.setState((state) => ({
+      post: {...state.post,
+            title: value }
+    }))  
   }
 
   handleBodyChange = (value) => {
-    this.setState({ post: { body: value } }) 
+    this.setState((state) => ({
+      post: {...state.post,
+            body: value }
+    }))  
   }
 
   componentDidMount() {
-    const { dispatch, selectedPost, post } = this.props
-    if (this.props.match.params.post) {
-      const post = this.props.match.params.post
-      this.setState({ post: this.props.post})
-    }
+    const post = this.props.match.params.post
+    this.props.dispatch(selectPost(post))
+    this.props.dispatch(fetchPost(post)).then(data => this.setState({post: data.post}))
   }
 
-  render() {    
+  render() {   
+    const isEnabled = this.state.post.title.length > 0 && this.state.post.body.length > 0
     return (
       <div>  
         <div className='nav'>
@@ -56,8 +67,10 @@ class PostEdit extends Component {
             <form onSubmit={this.handleSubmit} className="create-posts-form">
               <div className="create-posts-details">
                 <input type="text" name="title" placeholder="title" value={this.state.post.title} onChange={e => this.handleTitleChange(e.target.value)}/>
+                <span className={this.state.post.title ? "valid" : "error"} >Post title can't be empty.</span>
                 <input type="text" name="body" placeholder="body" value={this.state.post.body} onChange={e => this.handleBodyChange(e.target.value)}/>
-                <button className="grey-button">Edit Post</button>
+                <span className={this.state.post.body.length > 0 ? "valid" : "error"} >Post body can't be empty.</span>
+                <button className="grey-button" disabled={!isEnabled}>Edit Post</button>
               </div>
             </form>
           </div>

@@ -12,8 +12,44 @@ class PostCreate extends Component {
     this.props.dispatch(pushPostCreate(values, this.props.match.params.category))
     this.props.history.push(`/${this.props.match.params.category}`)
   }
+
+  state = {
+    post: {
+      author: "author",
+      body: "body",         
+      title: "title"
+    }
+  }
+
+  handleTitleChange = (value) => {
+    this.setState((state) => ({
+      post: {
+        ...state.post,
+        title: value 
+      }
+    }))  
+  }
+
+  handleBodyChange = (value) => {
+    this.setState((state) => ({
+      post: {
+        ...state.post,
+        body: value 
+      }
+    }))  
+  }
+
+  handleAuthorChange = (value) => {
+    this.setState((state) => ({
+      post: {
+        ...state.post,
+        author: value 
+      }
+    }))  
+  }
   
   render() {    
+    const isEnabled = this.state.post.title.length > 0 && this.state.post.body.length > 0 && this.state.post.author.length > 0
     return (
       <div>
         <div className='nav'>
@@ -22,10 +58,28 @@ class PostCreate extends Component {
         </div> 
         <form onSubmit={this.handleSubmit} className="create-posts-form">  
           <div className="create-posts-details">
-            <input type="text" name="title" placeholder="title" />
-            <input type="text" name="body" placeholder="body"/>
-            <input type="text" name="author" placeholder="author"/>
-            <button className="grey-button">Add Post</button>
+            <input 
+              type="text" 
+              name="title" 
+              placeholder="title" 
+              value={this.state.post.title} 
+              onChange={e => this.handleTitleChange(e.target.value)}/>
+            <span className={this.state.post.title ? "valid" : "error"} >Post title can't be empty.</span>
+            <input 
+              type="text" 
+              name="body" 
+              placeholder="body" 
+              value={this.state.post.body} 
+              onChange={e => this.handleBodyChange(e.target.value)}/>
+            <span className={this.state.post.body ? "valid" : "error"} >Post body can't be empty.</span>
+            <input 
+              type="text" 
+              name="author" 
+              placeholder="author" 
+              value={this.state.post.author} 
+              onChange={e => this.handleAuthorChange(e.target.value)}/>
+            <span className={this.state.post.author ? "valid" : "error"} >Post author can't be empty.</span>
+            <button className="grey-button" disabled={!isEnabled}>Add Post</button>
           </div>
         </form>
       </div>

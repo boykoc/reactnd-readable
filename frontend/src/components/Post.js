@@ -8,6 +8,7 @@ import ThumbsDownIcon from 'react-icons/lib/fa/thumbs-o-down'
 import PlusIcon from 'react-icons/lib/fa/plus-circle'
 import EditIcon from 'react-icons/lib/fa/edit'
 import TrashIcon from 'react-icons/lib/fa/trash'
+import FourOFour from './FourOFour'
 
 class Post extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class Post extends Component {
     const { dispatch, selectedPost, match } = this.props
     dispatch(fetchComments(match.params.post))
     dispatch(selectPost(match.params.post))
-    dispatch(fetchPost(match.params.post))  
+    dispatch(fetchPost(match.params.post))
   }
   
   handleUpVote(e, post_id) {
@@ -69,68 +70,72 @@ class Post extends Component {
         </div> 
         <div className="create-posts-form">
           {isFetching && !post.hasOwnProperty('id') && <h2>Loading...</h2>}
-          {!isFetching && !post.hasOwnProperty('id') && <h2>No post found.</h2>}
+          {!isFetching && !post.hasOwnProperty('id') && <FourOFour/>}
           {post.hasOwnProperty('id') &&
-            <div className="create-posts-details">
-              <div className="flex-3">
-                <h2>{post.title}</h2>
-                <div className='posts-list'>
-                  <p>{post.body}</p>
-                  <p>Author: {post.author}</p>
-                  <p>Vote score: {post.voteScore}</p>
-                  <p>Total comments: {comments.length}</p>  
-                </div>
-                <p>
-                  <button 
-                    onClick={e => this.handleUpVote(e, post.id)} 
-                    className='post-remove'><ThumbsUpIcon size={30} fill={'#02b3e4'}/></button>
-                  <button 
-                    onClick={e => this.handleDownVote(e, post.id)} 
-                    className='post-remove'><ThumbsDownIcon size={30} fill={'#02b3e4'}/></button>
-                </p> 
-              </div>                     
+            <div>
+              <div className="create-posts-details">
+                <div className="flex-3">
+                  <h2>{post.title}</h2>
+                  <div className='posts-list'>
+                    <p>{post.body}</p>
+                    <p>Author: {post.author}</p>
+                    <p>Vote score: {post.voteScore}</p>
+                    <p>Total comments: {comments.length}</p>  
+                  </div>
+                  <p>
+                    <button 
+                      onClick={e => this.handleUpVote(e, post.id)} 
+                      className='post-remove'><ThumbsUpIcon size={30} fill={'#02b3e4'}/></button>
+                    <button 
+                      onClick={e => this.handleDownVote(e, post.id)} 
+                      className='post-remove'><ThumbsDownIcon size={30} fill={'#02b3e4'}/></button>
+                  </p> 
+                </div>                     
+              </div>
+
+              <div>
+                <button 
+                  onClick={() => this.onDeletePost(post.id)} 
+                  className='post-remove'><TrashIcon size={30} fill={'#02b3e4'}/></button>
+                <Link 
+                  to={`${post.id}/edit`} 
+                  className='post-remove'><EditIcon size={30} fill={'#02b3e4'}/></Link>              
+              </div>   
+       
+              <div className="create-posts-form">
+                <div className="create-posts-details">
+                  <h3>Comments</h3>
+                  <Link to={`${post.id}/comment/create`} className='post-create'><PlusIcon size={30} fill={'#02b3e4'}/> Add Comment</Link>
+                  <ul className='posts-list'>
+                    {comments.length > 0 &&
+                      comments.map((comment) => (
+                        <li key={comment.id} className='posts-list-item'>
+                          <div className='posts-details'>
+                            <p>{comment.body}</p>
+                            <p>Vote score: {comment.voteScore} | Author: {comment.author}</p>
+                            <p>
+                              <button 
+                                onClick={e => this.handleCommentUpVote(e, post.id, comment.id)} 
+                                className='post-remove'><ThumbsUpIcon size={30} fill={'#02b3e4'}/></button>
+                              <button 
+                                onClick={e => this.handleCommentDownVote(e, post.id, comment.id)} 
+                                className='post-remove'><ThumbsDownIcon size={30} fill={'#02b3e4'}/></button>
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => this.onDeleteComment(comment.id)} 
+                            className='post-remove'><TrashIcon size={30} fill={'#02b3e4'}/></button>
+                          <Link 
+                            to={`${post.id}/${comment.id}/edit`} 
+                            className='post-remove'><EditIcon size={30} fill={'#02b3e4'}/></Link>
+                        </li>
+                      ))
+                    }
+                  </ul>   
+                </div>     
+              </div>
             </div>
           }
-          <div>
-            <button 
-              onClick={() => this.onDeletePost(post.id)} 
-              className='post-remove'><TrashIcon size={30} fill={'#02b3e4'}/></button>
-            <Link 
-              to={`${post.id}/edit`} 
-              className='post-remove'><EditIcon size={30} fill={'#02b3e4'}/></Link>              
-          </div>   
-        </div>
-        <div className="create-posts-form">
-          <div className="create-posts-details">
-            <h3>Comments</h3>
-            <Link to={`${post.id}/comment/create`} className='post-create'><PlusIcon size={30} fill={'#02b3e4'}/> Add Comment</Link>
-            <ul className='posts-list'>
-              {comments.length > 0 &&
-                comments.map((comment) => (
-                  <li key={comment.id} className='posts-list-item'>
-                    <div className='posts-details'>
-                      <p>{comment.body}</p>
-                      <p>Vote score: {comment.voteScore} | Author: {comment.author}</p>
-                      <p>
-                        <button 
-                          onClick={e => this.handleCommentUpVote(e, post.id, comment.id)} 
-                          className='post-remove'><ThumbsUpIcon size={30} fill={'#02b3e4'}/></button>
-                        <button 
-                          onClick={e => this.handleCommentDownVote(e, post.id, comment.id)} 
-                          className='post-remove'><ThumbsDownIcon size={30} fill={'#02b3e4'}/></button>
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => this.onDeleteComment(comment.id)} 
-                      className='post-remove'><TrashIcon size={30} fill={'#02b3e4'}/></button>
-                    <Link 
-                      to={`${post.id}/${comment.id}/edit`} 
-                      className='post-remove'><EditIcon size={30} fill={'#02b3e4'}/></Link>
-                  </li>
-                ))
-              }
-            </ul>   
-          </div>     
         </div>
       </div>
     )

@@ -297,16 +297,19 @@ export function sortByVote(posts, category) {
 
 /* Thunk Actions for async calls */  
 
-export function fetchPosts(category) {
-  let url = `${process.env.REACT_APP_BACKEND}/${category}/posts`
+const url = process.env.REACT_APP_BACKEND || 'http://localhost:3001'
+const credentials = process.env.REACT_APP_BACKEND ? 'include' : 'omit'
+
+export function fetchPosts(category) {  
+  let fullurl = `${url}/${category}/posts`
   if (category === 'all') {
-    url = `${process.env.REACT_APP_BACKEND}/posts`
+    fullurl = `${url}/posts`
   }
   return function (dispatch) {
     dispatch(requestPosts(category))
-    return fetch(url, 
-                 { headers: { 'Authorization': 'whatever-you-want' },
-                 credentials: 'include' } )
+    return fetch(fullurl, 
+                 { headers: { 'Authorization': 'whatever-you-want' }, 
+                 credentials: credentials } )
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -320,9 +323,9 @@ export function fetchPosts(category) {
 export function fetchPost(post) {
   return function (dispatch) {
     dispatch(requestPost(post))
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post}`, 
-                 { headers: { 'Authorization': 'whatever-you-want' },
-                 credentials: 'include' } )
+    return fetch(`${url}/posts/${post}`, 
+                 { headers: { 'Authorization': 'whatever-you-want' }, 
+                 credentials: credentials} )
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -336,9 +339,9 @@ export function fetchPost(post) {
 export function fetchComments(post) {
   return function (dispatch) {
     dispatch(requestComments(post))
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post}/comments`, 
-                 { headers: { 'Authorization': 'whatever-you-want' },
-                 credentials: 'include' } )
+    return fetch(`${url}/posts/${post}/comments`, 
+                 { headers: { 'Authorization': 'whatever-you-want' }, 
+                 credentials: credentials} )
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -352,9 +355,9 @@ export function fetchComments(post) {
 export function fetchComment(comment) {
   return function (dispatch) {
     dispatch(requestComment(comment))
-    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment}`, 
-                 { headers: { 'Authorization': 'whatever-you-want' },
-                 credentials: 'include' } )
+    return fetch(`${url}/comments/${comment}`, 
+                 { headers: { 'Authorization': 'whatever-you-want' }, 
+                 credentials: credentials} )
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -368,11 +371,11 @@ export function fetchComment(comment) {
 export function pushPostVote(post_id, vote) {
   return function (dispatch) {
     dispatch(sendPostVote(post_id, vote))
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
+    return fetch(`${url}/posts/${post_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'post',
                    body: JSON.stringify( {'option': vote} ) } )
       .then(
@@ -388,11 +391,11 @@ export function pushPostVote(post_id, vote) {
 export function pushCommentVote(comment_id, vote) {
   return function (dispatch) {
     dispatch(sendCommentVote(comment_id, vote))
-    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
+    return fetch(`${url}/comments/${comment_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'post',
                    body: JSON.stringify( {'option': vote} ) } )
       .then(
@@ -408,11 +411,11 @@ export function pushCommentVote(comment_id, vote) {
 export function pushPostDelete(post_id, posts, category) {
   return function (dispatch) {
     dispatch(sendDeletePost(post_id))
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
+    return fetch(`${url}/posts/${post_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'delete' } )
       .then(
         response => response,
@@ -426,11 +429,11 @@ export function pushPostDelete(post_id, posts, category) {
 
 export function pushPostCreate(post, category) {
   return function (dispatch) {
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts`,            
+    return fetch(`${url}/posts`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'post',
                    body: JSON.stringify( {...post, 
                                           'id': uuid(),
@@ -447,13 +450,12 @@ export function pushPostCreate(post, category) {
 }
 
 export function pushPostEdit(post, post_id) {
-  console.log(post)
   return function (dispatch) {
-    return fetch(`${process.env.REACT_APP_BACKEND}/posts/${post_id}`,            
+    return fetch(`${url}/posts/${post_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'put',
                    body: JSON.stringify( {title: post.title,
                                           body: post.body} ) } )
@@ -470,11 +472,11 @@ export function pushPostEdit(post, post_id) {
 export function pushCommentDelete(post, comment_id, comments) {
   return function (dispatch) {
     dispatch(sendDeleteComment(comment_id))
-    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
+    return fetch(`${url}/comments/${comment_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'delete' } )
       .then(
         response => response,
@@ -488,11 +490,11 @@ export function pushCommentDelete(post, comment_id, comments) {
 
 export function pushCommentCreate(comment, post_id) {
   return function (dispatch) {
-    return fetch(`${process.env.REACT_APP_BACKEND}/comments`,            
+    return fetch(`${url}/comments`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'post',
                    body: JSON.stringify( {...comment, 
                                           'id': uuid(),
@@ -510,11 +512,11 @@ export function pushCommentCreate(comment, post_id) {
 
 export function pushCommentEdit(comment, comment_id) {
   return function (dispatch) {
-    return fetch(`${process.env.REACT_APP_BACKEND}/comments/${comment_id}`,            
+    return fetch(`${url}/comments/${comment_id}`,            
                  { headers: { 'Authorization': 'whatever-you-want', 
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json'},
-                   credentials: 'include',
+                              'Accept': 'application/json'}, 
+                   credentials: credentials,
                    method: 'put',
                    body: JSON.stringify( { body: comment.body,
                                            timestamp: Date.now() } ) } )

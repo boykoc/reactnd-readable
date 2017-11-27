@@ -19,7 +19,16 @@ body {
 body, .app {
   background: #f5f5f5;
 }
-
+.valid {
+  display: none;
+}
+.error {
+  color: #FF0000;
+  display: block;
+}
+.center {
+  text-align: center;
+}
 /* CreatePost */
 
 .create-posts-form {

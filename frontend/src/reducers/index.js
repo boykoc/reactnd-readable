@@ -44,6 +44,10 @@ function posts( state = { isFetching: false, items: []}, action) {
       return {...state, 
         items: action.posts.filter((post) => post.id !== action.post_id)
       }
+    case CREATE_POST:
+      return {...state, 
+        items: [...state.items, action.post]
+      }
     default:
       return state
   }
@@ -63,7 +67,7 @@ function postsByCategory(state = {}, action) {
       }
     case CREATE_POST:
       return {...state,
-        [action.post.category]: [...posts, action.post]
+        [action.post.category]: posts(state[action.post.category], action)
       }
     case EDIT_POST:
     case SORT_BY_DATE:
@@ -175,6 +179,14 @@ function comments( state = { isFetching: false, comments: []}, action) {
       return {...state, 
         comments: action.comments.filter((comment) => comment.id !== action.comment_id)
       }
+    case CREATE_COMMENT:
+      return {...state, 
+        comments: [...state.comments, action.comment]
+      }
+    case EDIT_COMMENT:
+      return {...state, 
+        comments: [...state.comments.filter((comment) => comment.id !== action.comment.id), action.comment ]
+      }      
     default:
       return state
   }
@@ -193,7 +205,13 @@ function commentsByPost(state = {}, action) {
         [action.post]: comments(state[action.post], action)
       }      
     case CREATE_COMMENT:
+      return {...state, 
+        [action.comment.parentId]: comments(state[action.comment.parentId], action)
+      }      
     case EDIT_COMMENT:
+      return {...state, 
+        [action.comment.parentId]: comments(state[action.comment.parentId], action)
+      }          
     default: 
       return state
   }
